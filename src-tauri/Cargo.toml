@@ -1,0 +1,14 @@
+[package]
+name = "monorepo-viewer"
+version = "0.1.0"
+description = "A focused Git history viewer for monorepo folders"
+authors = ["Monorepo Viewer"]
+edition = "2021"
+
+[build-dependencies]
+tauri-build = { version = "2", features = [] }
+
+[dependencies]
+serde = { version = "1", features = ["derive"] }
+tauri = { version = "2", features = [] }
+tauri-plugin-dialog = "2"
