@@ -67,6 +67,14 @@ fn ensure_relative_path(path: &str) -> Result<(), String> {
     }
 }
 
+fn ensure_optional_relative_path(path: &str) -> Result<(), String> {
+    if path.trim().is_empty() {
+        Ok(())
+    } else {
+        ensure_relative_path(path)
+    }
+}
+
 #[tauri::command]
 fn open_repository(path: String) -> Result<RepoInfo, String> {
     let root = run_git(&path, &["rev-parse", "--show-toplevel"])?
@@ -87,19 +95,31 @@ fn open_repository(path: String) -> Result<RepoInfo, String> {
 
 #[tauri::command]
 fn get_folder_history(repo: String, folder: String, limit: Option<u32>) -> Result<Vec<CommitSummary>, String> {
-    ensure_relative_path(&folder)?;
+    ensure_optional_relative_path(&folder)?;
     let limit_arg = format!("-n{}", limit.unwrap_or(200).min(1000));
-    let output = run_git(
-        &repo,
-        &[
-            "log",
-            &limit_arg,
-            "--date=iso-strict",
-            "--pretty=format:%H%x1f%h%x1f%an%x1f%ae%x1f%aI%x1f%s%x1e",
-            "--",
-            &folder,
-        ],
-    )?;
+    let output = if folder.trim().is_empty() {
+        run_git(
+            &repo,
+            &[
+                "log",
+                &limit_arg,
+                "--date=iso-strict",
+                "--pretty=format:%H%x1f%h%x1f%an%x1f%ae%x1f%aI%x1f%s%x1e",
+            ],
+        )?
+    } else {
+        run_git(
+            &repo,
+            &[
+                "log",
+                &limit_arg,
+                "--date=iso-strict",
+                "--pretty=format:%H%x1f%h%x1f%an%x1f%ae%x1f%aI%x1f%s%x1e",
+                "--",
+                &folder,
+            ],
+        )?
+    };
 
     let commits = output
         .split('\x1e')
@@ -125,19 +145,27 @@ fn get_folder_history(repo: String, folder: String, limit: Option<u32>) -> Resul
 
 #[tauri::command]
 fn get_commit_detail(repo: String, commit: String, folder: String) -> Result<CommitDetail, String> {
-    ensure_relative_path(&folder)?;
+    ensure_optional_relative_path(&folder)?;
     if commit.trim().is_empty() {
         return Err("コミットが指定されていません".to_string());
     }
 
-    let file_output = run_git(&repo, &["show", "--name-status", "--format=", &commit, "--", &folder])?;
+    let file_output = if folder.trim().is_empty() {
+        run_git(&repo, &["show", "--name-status", "--format=", &commit])?
+    } else {
+        run_git(&repo, &["show", "--name-status", "--format=", &commit, "--", &folder])?
+    };
     let files = file_output
         .lines()
         .filter(|line| !line.trim().is_empty())
         .filter_map(parse_name_status)
         .collect();
 
-    let mut diff = run_git(&repo, &["show", "--format=", "--find-renames", &commit, "--", &folder])?;
+    let mut diff = if folder.trim().is_empty() {
+        run_git(&repo, &["show", "--format=", "--find-renames", &commit])?
+    } else {
+        run_git(&repo, &["show", "--format=", "--find-renames", &commit, "--", &folder])?
+    };
     const MAX_DIFF_BYTES: usize = 500_000;
     if diff.len() > MAX_DIFF_BYTES {
         diff.truncate(MAX_DIFF_BYTES);

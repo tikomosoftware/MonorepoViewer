@@ -58,6 +58,10 @@ const MIN_COMMIT_WIDTH = 260;
 const MIN_DETAIL_WIDTH = 360;
 const MIN_FILE_HEIGHT = 120;
 const MIN_DIFF_HEIGHT = 220;
+const ALL_FOLDERS: RootFolder = {
+  name: "All",
+  path: "",
+};
 
 function App() {
   const [repoPath, setRepoPath] = useState("");
@@ -118,6 +122,13 @@ function App() {
       const nextRepo = await invoke<RepoInfo>("open_repository", { path: trimmed });
       setRepo(nextRepo);
       setRepoPath(nextRepo.root);
+      setSelectedFolder(ALL_FOLDERS);
+      const nextCommits = await invoke<CommitSummary[]>("get_folder_history", {
+        repo: nextRepo.root,
+        folder: ALL_FOLDERS.path,
+        limit: 200,
+      });
+      setCommits(nextCommits);
     } catch (err) {
       setError(String(err));
     } finally {
@@ -273,8 +284,17 @@ function App() {
         }}
       >
         <aside className="folder-panel">
-          <PanelTitle icon={<FolderGit2 size={17} />} title="Folders" count={repo?.folders.length ?? 0} />
+          <PanelTitle icon={<FolderGit2 size={17} />} title="Folders" count={repo ? repo.folders.length + 1 : 0} />
           <div className="list">
+            {repo && (
+              <button
+                type="button"
+                className={`list-row folder-row all-folder-row ${selectedFolder?.path === ALL_FOLDERS.path ? "active" : ""}`}
+                onClick={() => void selectFolder(ALL_FOLDERS)}
+              >
+                <span>{ALL_FOLDERS.name}</span>
+              </button>
+            )}
             {repo?.folders.map((folder) => (
               <button
                 key={folder.path}

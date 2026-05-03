@@ -145,7 +145,10 @@ button {
 
 .detail-panel {
   display: grid;
+  width: 100%;
   min-width: 0;
+  max-width: 100%;
+  overflow: hidden;
 }
 
 .resize-handle {
@@ -265,6 +268,10 @@ body.is-resizing {
   white-space: nowrap;
 }
 
+.all-folder-row {
+  font-weight: 700;
+}
+
 .commit-row {
   display: block;
   padding: 10px 12px;
@@ -301,7 +308,10 @@ body.is-resizing {
 }
 
 .file-pane {
+  width: 100%;
   min-height: 0;
+  min-width: 0;
+  max-width: 100%;
   overflow: hidden;
 }
 
@@ -388,7 +398,11 @@ body.is-resizing {
 }
 
 .diff-pane {
+  width: 100%;
+  min-width: 0;
   min-height: 0;
+  max-width: 100%;
+  overflow: hidden;
 }
 
 .diff-view,
@@ -469,7 +483,7 @@ body.is-resizing {
 }
 
 .diff-file {
-  width: max-content;
+  width: 100%;
   min-width: 100%;
   border-bottom: 1px solid #d9dee6;
 }
@@ -534,7 +548,7 @@ body.is-resizing {
   display: grid;
   grid-template-columns: 48px 48px 22px minmax(520px, 1fr);
   min-height: 21px;
-  width: max-content;
+  width: 100%;
   min-width: 100%;
   white-space: pre;
 }
@@ -558,6 +572,7 @@ body.is-resizing {
   padding: 2px 10px 2px 0;
   color: #202938;
   font-family: "Cascadia Mono", Consolas, monospace;
+  overflow: visible;
 }
 
 .diff-line-add {
