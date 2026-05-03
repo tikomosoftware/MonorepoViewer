@@ -3,13 +3,21 @@ import { open } from "@tauri-apps/plugin-dialog";
 import {
   AlertCircle,
   Clock3,
+  Code2,
+  Database,
+  File,
   FileCode2,
+  FileCog,
+  FileImage,
+  FileJson,
+  FileText,
   FolderGit2,
   GitCommitHorizontal,
   Loader2,
   Search,
 } from "lucide-react";
 import { useMemo, useRef, useState } from "react";
+import { DiffViewer } from "./DiffViewer";
 
 type RepoInfo = {
   path: string;
@@ -347,6 +355,9 @@ function App() {
                     onClick={() => void selectFile(file)}
                   >
                     <span className={`status status-${file.status[0]}`}>{file.status}</span>
+                    <span className="file-type-icon" aria-hidden="true">
+                      {getFileIcon(file.path)}
+                    </span>
                     <span title={file.old_path ? `${file.old_path} -> ${file.path}` : file.path}>{file.path}</span>
                   </button>
                 ))}
@@ -363,7 +374,7 @@ function App() {
           />
           <div className="diff-pane">
             <PanelTitle icon={<Clock3 size={17} />} title="Diff" />
-            <pre className="diff-view">{diff}</pre>
+            <DiffViewer diff={diff} />
           </div>
         </section>
       </section>
@@ -410,6 +421,34 @@ function formatDate(value: string) {
 
 function clamp(value: number, min: number, max: number) {
   return Math.max(min, Math.min(value, Math.max(min, max)));
+}
+
+function getFileIcon(path: string) {
+  const extension = path.split(".").pop()?.toLowerCase() ?? "";
+  const fileName = path.split(/[\\/]/).pop()?.toLowerCase() ?? "";
+
+  if (["png", "jpg", "jpeg", "gif", "webp", "bmp", "ico", "svg"].includes(extension)) {
+    return <FileImage size={15} />;
+  }
+  if (["json", "jsonc", "lock"].includes(extension) || fileName === "package-lock.json") {
+    return <FileJson size={15} />;
+  }
+  if (["ts", "tsx", "js", "jsx", "rs", "cs", "kt", "swift", "dart", "java", "py", "go", "cpp", "c", "h"].includes(extension)) {
+    return <Code2 size={15} />;
+  }
+  if (["html", "css", "scss", "xaml", "xml", "vue", "svelte"].includes(extension)) {
+    return <FileCode2 size={15} />;
+  }
+  if (["md", "txt", "log", "csv", "tsv"].includes(extension)) {
+    return <FileText size={15} />;
+  }
+  if (["sql", "db", "sqlite"].includes(extension)) {
+    return <Database size={15} />;
+  }
+  if (["toml", "yaml", "yml", "ini", "config", "conf"].includes(extension) || fileName.startsWith(".")) {
+    return <FileCog size={15} />;
+  }
+  return <File size={15} />;
 }
 
 export default App;
