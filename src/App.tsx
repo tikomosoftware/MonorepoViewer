@@ -13,8 +13,10 @@ import {
   FileText,
   FolderGit2,
   GitCommitHorizontal,
+  Info,
   Loader2,
   Search,
+  X,
 } from "lucide-react";
 import { useMemo, useRef, useState } from "react";
 import { DiffViewer } from "./DiffViewer";
@@ -75,6 +77,7 @@ function App() {
   const [query, setQuery] = useState("");
   const [busy, setBusy] = useState<BusyState>("idle");
   const [error, setError] = useState<string | null>(null);
+  const [isAboutOpen, setIsAboutOpen] = useState(false);
   const [folderWidth, setFolderWidth] = useState(220);
   const [commitWidth, setCommitWidth] = useState(426);
   const [fileHeight, setFileHeight] = useState(210);
@@ -266,6 +269,10 @@ function App() {
           <button type="button" className="primary" onClick={() => void loadRepository()} disabled={busy === "repo"}>
             {busy === "repo" ? <Loader2 className="spin" size={16} /> : "開く"}
           </button>
+          <button type="button" className="about-menu-button" onClick={() => setIsAboutOpen(true)}>
+            <Info size={16} />
+            <span>About</span>
+          </button>
         </div>
       </header>
 
@@ -398,7 +405,55 @@ function App() {
           </div>
         </section>
       </section>
+
+      {isAboutOpen && <AboutDialog onClose={() => setIsAboutOpen(false)} />}
     </main>
+  );
+}
+
+function AboutDialog({ onClose }: { onClose: () => void }) {
+  return (
+    <div className="modal-backdrop" role="presentation" onMouseDown={onClose}>
+      <section className="about-dialog" role="dialog" aria-modal="true" aria-labelledby="about-title" onMouseDown={(event) => event.stopPropagation()}>
+        <header className="about-header">
+          <div>
+            <h2 id="about-title">Monorepo Viewer</h2>
+            <p>Folder-aware Git history viewer for local monorepos.</p>
+          </div>
+          <button type="button" className="icon-button" aria-label="Close About" onClick={onClose}>
+            <X size={18} />
+          </button>
+        </header>
+
+        <div className="about-body">
+          <dl>
+            <div>
+              <dt>Version</dt>
+              <dd>0.1.0</dd>
+            </div>
+            <div>
+              <dt>Desktop</dt>
+              <dd>Tauri v2</dd>
+            </div>
+            <div>
+              <dt>Frontend</dt>
+              <dd>React, TypeScript, Vite</dd>
+            </div>
+            <div>
+              <dt>Git</dt>
+              <dd>Local git CLI</dd>
+            </div>
+            <div>
+              <dt>Repository</dt>
+              <dd>https://github.com/tikomosoftware/MonorepoViewer</dd>
+            </div>
+          </dl>
+          <p>
+            This app focuses on repository-wide and root-folder-scoped commit history, changed files, and readable diffs.
+          </p>
+        </div>
+      </section>
+    </div>
   );
 }
 

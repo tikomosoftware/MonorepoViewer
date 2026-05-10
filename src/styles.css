@@ -77,10 +77,10 @@ button {
 
 .repo-picker {
   display: grid;
-  grid-template-columns: minmax(320px, 1fr) auto auto;
+  grid-template-columns: minmax(320px, 1fr) auto auto auto;
   gap: 8px;
   flex: 1;
-  max-width: 720px;
+  max-width: 820px;
 }
 
 .repo-picker input,
@@ -99,6 +99,10 @@ button {
 }
 
 .repo-picker button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
   height: 36px;
   border: 1px solid #c8d0da;
   border-radius: 6px;
@@ -108,13 +112,14 @@ button {
 }
 
 .repo-picker .primary {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
   min-width: 64px;
   border-color: #2367c7;
   background: #2367c7;
   color: white;
+}
+
+.about-menu-button {
+  min-width: 88px;
 }
 
 .error-bar {
@@ -126,6 +131,98 @@ button {
   background: #fff1ef;
   color: #9a2c20;
   font-size: 13px;
+}
+
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(28, 35, 45, 0.28);
+}
+
+.about-dialog {
+  width: min(520px, calc(100vw - 48px));
+  border: 1px solid #cbd3df;
+  border-radius: 8px;
+  background: #ffffff;
+  box-shadow: 0 18px 50px rgba(20, 30, 45, 0.22);
+  color: #1f2733;
+}
+
+.about-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 18px;
+  padding: 18px 18px 14px;
+  border-bottom: 1px solid #e1e6ed;
+}
+
+.about-header h2 {
+  margin: 0;
+  font-size: 19px;
+  letter-spacing: 0;
+}
+
+.about-header p {
+  margin: 5px 0 0;
+  color: #657080;
+  font-size: 13px;
+}
+
+.icon-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border: 1px solid #cfd6df;
+  border-radius: 6px;
+  background: #ffffff;
+  color: #39465a;
+}
+
+.icon-button:hover {
+  background: #f4f7fa;
+}
+
+.about-body {
+  padding: 16px 18px 18px;
+}
+
+.about-body dl {
+  display: grid;
+  gap: 10px;
+  margin: 0 0 16px;
+}
+
+.about-body dl div {
+  display: grid;
+  grid-template-columns: 110px minmax(0, 1fr);
+  gap: 12px;
+}
+
+.about-body dt {
+  color: #657080;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.about-body dd {
+  margin: 0;
+  overflow-wrap: anywhere;
+  color: #243044;
+  font-size: 13px;
+}
+
+.about-body p {
+  margin: 0;
+  color: #4e5b6f;
+  font-size: 13px;
+  line-height: 1.5;
 }
 
 .workspace {
